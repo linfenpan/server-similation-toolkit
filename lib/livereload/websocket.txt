@@ -1,0 +1,8 @@
+// 客户端 websocke
+;(function() {
+  if (!('WebSocket' in window)) {
+    return;
+  }
+
+  
+})();
