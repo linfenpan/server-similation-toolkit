@@ -1,7 +1,19 @@
 'use strict';
 const Server = require('../lib/server');
 
-const app = Server.create({ static: { '/static': './static' }, livereload: '/server/livereload', port: 3000 });
+const app = Server.create({ 
+  static: { '/static': './static' }, 
+  livereload: '/server/livereload', 
+  port: 3000,
+  // 跳过一些非 200 的日志
+  morganSkip: function(req, res) {
+    return res.statusCode != 200;
+  }
+});
+
+// 测试多个 static 路径，是否正常
+app.setStatic('/static', ['./static2']);
+app.setStatic('/', 'http://res.xyq.cbg.163.com');
 
 app.get('/', (req, res, next) => {
   res.inject([
@@ -21,10 +33,12 @@ app.get('/', (req, res, next) => {
       </head>
       <body>
         <pre>Hi</pre>
+        <img src="http://10.255.208.81:3000/images/role_icon/small/11.gif" />
       </body>
     </html>
   `);
 });
+
 
 
 // setTimeout(function() {
