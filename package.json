@@ -23,8 +23,10 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "chalk": "^2.3.1",
+    "chokidar": "^2.0.2",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
+    "fs-extra": "^5.0.0",
     "get-port": "^3.2.0",
     "got": "^8.2.0",
     "is-absolute-url": "^2.1.0",

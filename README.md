@@ -126,3 +126,66 @@ staticResourcer.setStatic('/static', [...]);
 ```
 
 在 `server.js` 中的 `setStatic` 方法，已经集成了 `static-resourcer.js`。
+
+
+# 文件监控、管理
+业务中，常有监控某些文件，如果特定文件有更变，则需要执行相应的任务，`file-watcher.js`应运而生，内置了 `chokidar` 监控库，对日常的监控文件更变、复制文件到某一目录，进行了封装，使用如下:
+
+```javascript
+const Path = require('path');
+const FileWatcher = require('../lib/file-watcher');
+
+const fileWatcher = new FileWatcher({
+  cwd: Path.resolve(__dirname, './files'),    // 此目录作为根目录，下面的 watch 操作，从此目录去寻找文件
+  release: Path.resolve(__dirname, './dist'), // 设置复制的目标目录，如果为 null，而且没有调用 copyTo 方法，则不执行复制操作
+  // linkCopy: false                          // 复制的时候，是否使用 “硬链接” 形式，进行复制，默认是 true
+});
+
+fileWatcher.on('each:change', function(p) {
+  // 每次有文件更新时
+});
+fileWatcher.on('each:add', function(p) {
+  // 每次有文件，进入监听列表时
+});
+fileWatcher.on('each:ready', function() {
+  // 每个 .watch() 准备完成时
+});
+
+// 监控根目录下，所有 index.js
+fileWatcher.watch('**/index.js');
+// 监控根目录下，所有 样式 文件，并且复制到 目标目录下 
+fileWatcher.watch('**/*.css').copyTo('./');
+```
+
+方法介绍:
+```javascript
+const watcher = fileWatcher.watch('file, dir, glob, or array', { ignored: 被忽略目录的正则，默认是 /node_modules/ });
+
+watcher.on('ready, add, change, unlink 4个事件', callback);
+
+watcher.copyTo(String || Function);
+```
+注:
+`watcher.copyTo()` 如果传入的字符串，带后缀名称，则默认是一个文件。如果传入的是一个函数，那么函数的第一个参数，则是当前监控文件的相对路径，例如:
+```javascript
+// 把所有样式，复制到 目标目录下
+// 但是，如果是 base.css，那么把 base.css 改名为 base-rename.css
+fileWatcher.watch('**/*.css').copyTo(function(p) {
+  if (/base\.css/.test(p)) {
+    return p.replace(/base/, 'base-rename');
+  }
+  return './';
+});
+```
+
+
+# 数据爬虫
+TODO 简单的源数据爬取，不做太复杂的功能
+
+
+# 数据模拟器
+TODO 读取模拟数据，mock 数据
+
+
+# 虚拟模板
+TODO 前端简单的运行服务器的一些模板
