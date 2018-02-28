@@ -10,4 +10,4 @@ exports.InjectMiddleware = require('./lib/middleware/inject');
 
 // @test
 exports.DataSpider = require('./lib/data-spider');
-exports.Jinja2Tempate = require('./lib/template/jinja2');
+exports.Jinja2Template = require('./lib/template/jinja2');

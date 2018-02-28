@@ -77,7 +77,7 @@ const reloader = new PollingReloader({ timeout: 3000 });
 reloader.connect(app);  // 传入 Server 或 Express 的实例
 reloader.reload();      // 刷新页面
 ```
-须配合 `InjectMiddleware` 使用
+须配合 `InjectMiddleware` 使用，同时，需要把 `response` 的 `Content-Type` 设置为 `text/html`，才会对 html 的内容，进行注入
 
 ## websocket
 `websocket`形式的自动刷新，待实现...
@@ -210,5 +210,5 @@ Spider.parseDom(content: String || Buffer, charsets?: Array);
 Spider.get(url, options);
 ```
 
-# (测试，下版本可能删除)Jinja2Tempate
+# (测试，下版本可能删除)Jinja2Template
 暂时仅提供 `jinja2` 运行模板，具体见 npm 上的 `node-jinja2-template`。
