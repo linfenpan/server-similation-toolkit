@@ -17,9 +17,12 @@ app.setStatic('/', 'http://res.xyq.cbg.163.com');
 
 app.get('/', (req, res, next) => {
   res.inject([
-    /^text\/html/i,
-    /<body>/i,
-    '测试:' + Date.now()
+    function isHit(content, req, res) {
+      return /^text\/html/.test(res.get('content-type') || '') && typeof content === 'string';
+    },
+    function handle(content, req, res) {
+      return content.replace(/<body>/i, '<body>\n' + '测试:' + Date.now())
+    }
   ]);
 
   res.set('content-type', 'text/html');

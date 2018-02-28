@@ -12,7 +12,7 @@
 总得试试，对吧？
 
 
-# 服务器
+# Server
 
 此部分，继承 `express`，然后拓展出几个常用方法:
 
@@ -70,7 +70,7 @@ Server.CookieParser = require('cookie-parser');
 
 
 # 自动重载
-## polling
+## PollingReloader
 轮询形式的自动刷新，有以下几个方法:
 ```javascript
 const PollingReloader = require('./lib/livereload/polling');
@@ -87,23 +87,21 @@ reloader.reload();      // 刷新页面
 
 # middleware
 
-## inject
+## InjectMiddleware
 又名 `注入` 中间件，用于给特定内容，注入额外信息，使用如下:
 ```javascript
 app.use((req, res) => {
   if (true /*满足某个条件*/) {
     // 翻译如下: 如果 content-type 满足 /^text\/html/i，则在 /<head>/ 后面，插入 <script>...</script>
     res.inject([
-      /^text\/html/i,        //   content-type 的正则，只有匹配此正则，才会去注入，如 /^text\/html/i,
-      /<head>/,              //   需要被替换内容的正则，如 /<head>/,
-      '<script>..</script>', //   被注入的内容，仅限字符串
-      'after'                //   被注入的位置，有 'before|after|replace' 三个选项
+      function isHit(content, req, res) { return true; },        // 检查当前请求，是否满足要求
+      function handle(content, req, res) { return content; }     // 如果满足要求，应该怎么加工内容
     ]);
   }
 });
 ```
 
-# 静态资源寻址
+# StaticResourcer
 同一个访问目录的资源，可能放置在不同的目录，甚至，并不存在于本地的目录，我们迫切需要一个快捷工具、或方法，来满足我们这类的需求:
 
 ```javascript
@@ -128,7 +126,7 @@ staticResourcer.setStatic('/static', [...]);
 在 `server.js` 中的 `setStatic` 方法，已经集成了 `static-resourcer.js`。
 
 
-# 文件监控、管理
+# FileWatcher
 业务中，常有监控某些文件，如果特定文件有更变，则需要执行相应的任务，`file-watcher.js`应运而生，内置了 `chokidar` 监控库，对日常的监控文件更变、复制文件到某一目录，进行了封装，使用如下:
 
 ```javascript
@@ -187,5 +185,5 @@ TODO 简单的源数据爬取，不做太复杂的功能
 TODO 读取模拟数据，mock 数据
 
 
-# 虚拟模板
-TODO 前端简单的运行服务器的一些模板
+# Jinja2Tempate
+暂时仅提供 `jinja2` 运行模板，看 `./lib/template/jinja2`，具体见 npm 上的 `node-jinja2-template`。
