@@ -1,15 +1,13 @@
-每个项目，都会为其编写一个前端模拟服务器端请求的工具，不知不觉间，都已经编写了好几套类似，又有些许差异的工具了。
+每个项目，都会为其编写一个前端模拟服务器端请求的工具，不觉间，已经写了几套类似的工具。
 
-回首一下，实际这些工具，就那么四个板块:
+回首一下，实际上就四个板块:
 
  1. 文件监听
  2. 服务器模拟
  3. 自动重载
  4. 静态资源转发
 
-如果把 4 个板块，各自独立工具化，那是不是会更加灵活呢？
-
-总得试试，对吧？
+于是有了此项目，把上传的 4 个板块，各自工具化。
 
 
 # Server
@@ -18,7 +16,7 @@
 
 ```javascript
 const path = require('path');
-const Server = require('./lib/server');
+const Server = require('server-similation-toolkit').Server;
 
 // 建立服务的快捷方式，封装了以下几个参数
 // 在 process.nextTick 后，将自动调用 listen 方法
@@ -66,23 +64,23 @@ Server.BodyParser = require('body-parser');
 Server.CookieParser = require('cookie-parser');
 ```
 
-在 `new Server()` 中，强制使用了 `./lib/middleware/inject` 中间件，给所有 `res` 对象，添加了 `res.inject([])` 方法，具体见 `./lib/middleware/inject` 的介绍。
+在 `new Server()` 中，强制使用了 `InjectMiddleware` 中间件，给所有 `res` 对象，添加了 `res.inject([])` 方法，具体见 `InjectMiddleware` 的介绍。
 
 
 # 自动重载
 ## PollingReloader
 轮询形式的自动刷新，有以下几个方法:
 ```javascript
-const PollingReloader = require('./lib/livereload/polling');
+const PollingReloader = require('server-similation-toolkit').PollingReloader;
 const reloader = new PollingReloader({ timeout: 3000 });
 
 reloader.connect(app);  // 传入 Server 或 Express 的实例
 reloader.reload();      // 刷新页面
 ```
-须配合 `./lib/middleware/inject` 使用
+须配合 `InjectMiddleware` 使用
 
 ## websocket
-`websocket`形式的自动刷新，带实现...
+`websocket`形式的自动刷新，待实现...
 
 
 # middleware
@@ -117,7 +115,7 @@ app.setStatic('/static', [
 此工具类，应运而生:
 ```javascript
 // static-resourcer.js
-const StaticResourcer = require('./static-resourcer');
+const StaticResourcer = require('server-similation-toolkit').StaticResourcer;
 const staticResourcer = new StaticResourcer(app:Express Instance);
 
 staticResourcer.setStatic('/static', [...]);
@@ -131,7 +129,7 @@ staticResourcer.setStatic('/static', [...]);
 
 ```javascript
 const Path = require('path');
-const FileWatcher = require('../lib/file-watcher');
+const FileWatcher = require('server-similation-toolkit').FileWatcher;
 
 const fileWatcher = new FileWatcher({
   cwd: Path.resolve(__dirname, './files'),    // 此目录作为根目录，下面的 watch 操作，从此目录去寻找文件
@@ -177,13 +175,13 @@ fileWatcher.watch('**/*.css').copyTo(function(p) {
 ```
 
 
-# DataSpider
+# (测试，下版本可能删除)DataSpider
 简单的源数据爬取，不做太复杂的功能，如要复杂的数据爬取，可配合 `puppeteer` 或者 `testcafe` 进行。
 
 看例子:
 ```javascript
-const Util = require('./lib/util');
-const Spider = require('./lib/data-spider');
+const Util = require('server-similation-toolkit');
+const Spider = Util.DataSpider;
 
 Util.co(function* () {
   const url = 'http://www.baidu.com/';
@@ -212,5 +210,5 @@ Spider.parseDom(content: String || Buffer, charsets?: Array);
 Spider.get(url, options);
 ```
 
-# Jinja2Tempate
-暂时仅提供 `jinja2` 运行模板，看 `./lib/template/jinja2`，具体见 npm 上的 `node-jinja2-template`。
+# (测试，下版本可能删除)Jinja2Tempate
+暂时仅提供 `jinja2` 运行模板，具体见 npm 上的 `node-jinja2-template`。
