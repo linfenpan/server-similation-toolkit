@@ -177,13 +177,40 @@ fileWatcher.watch('**/*.css').copyTo(function(p) {
 ```
 
 
-# 数据爬虫
-TODO 简单的源数据爬取，不做太复杂的功能
+# DataSpider
+简单的源数据爬取，不做太复杂的功能，如要复杂的数据爬取，可配合 `puppeteer` 或者 `testcafe` 进行。
 
+看例子:
+```javascript
+const Util = require('./lib/util');
+const Spider = require('./lib/data-spider');
 
-# 数据模拟器
-TODO 读取模拟数据，mock 数据
+Util.co(function* () {
+  const url = 'http://www.baidu.com/';
+  const ua = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36';
 
+  const response = yield Spider.get(url, {
+    headers: {
+      // 设置 ua，以免被当作简单的爬虫了
+      'User-Agent': ua
+    }
+  });
+
+  // response.body 将拿到页面的源码
+  // parseDom 封装了 cheerio.load 方法
+  const $ = Spider.parseDom(response.body);
+  // 获取到标题内容
+  console.log($('title').html());
+});
+```
+
+方法介绍:
+```javascript
+// 把内容，转为 cheerio 对象，方便之后的查询
+Spider.parseDom(content: String || Buffer, charsets?: Array);
+// Spider 集成 got 库，能使用 got 库的所有方法，包括 get/post/head/patch/put/delete 等
+Spider.get(url, options);
+```
 
 # Jinja2Tempate
 暂时仅提供 `jinja2` 运行模板，看 `./lib/template/jinja2`，具体见 npm 上的 `node-jinja2-template`。
