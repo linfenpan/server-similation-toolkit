@@ -13,7 +13,7 @@ const app = Server.create({
 
 // 测试多个 static 路径，是否正常
 app.setStatic('/static', ['./static2']);
-app.setStatic('/', 'http://res.xyq.cbg.163.com');
+app.setStatic('/', ['http://res.xyq.cbg.163.com/test', 'http://res.xyq.cbg.163.com/']);
 
 app.get('/', (req, res, next) => {
   res.inject([
