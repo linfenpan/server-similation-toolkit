@@ -1,6 +1,6 @@
 {
   "name": "server-similation-toolkit",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "每个项目，都会为其编写一个前端模拟服务器端请求的工具，不知不觉间，都已经编写了好几套类似，又有些许差异的工具了。",
   "main": "index.js",
   "scripts": {

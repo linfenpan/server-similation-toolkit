@@ -1,5 +1,7 @@
 'use strict';
+const Path = require('path');
 const Server = require('../lib/server');
+const ReloadRouter = require('../lib/express-reload-router');
 
 const app = Server.create({ 
   static: { '/static': './static' }, 
@@ -14,6 +16,17 @@ const app = Server.create({
 // 测试多个 static 路径，是否正常
 app.setStatic('/static', ['./static2']);
 app.setStatic('/', ['http://res.xyq.cbg.163.com/test', 'http://res.xyq.cbg.163.com/']);
+
+const router = new ReloadRouter(
+  Path.resolve(__dirname, './router.js'), 
+  { 
+    watchFile: true,
+    onUpdate() { 
+      app.reloadPage(); 
+    }
+  }
+);
+app.use('/router', router);
 
 app.get('/', (req, res, next) => {
   res.inject([

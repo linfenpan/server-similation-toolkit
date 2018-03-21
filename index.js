@@ -7,6 +7,7 @@ exports.FileWatcher = require('./lib/file-watcher');
 exports.StaticResourcer = require('./lib/static-resourcer');
 exports.PollingReloader = require('./lib/livereload/polling');
 exports.InjectMiddleware = require('./lib/middleware/inject');
+exports.ReloadRouter = require('./lib/express-reload-router');
 
 // @test
 exports.DataSpider = require('./lib/data-spider');

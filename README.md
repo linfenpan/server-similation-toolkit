@@ -175,6 +175,89 @@ fileWatcher.watch('**/*.css').copyTo(function(p) {
 ```
 
 
+# ReloadRouter
+日常开发中，如果不依赖 `supervisor` 等外部工具，在更改 `Express` 的路由配置后，需要手动关闭应用，再次重启，才能使新的配置生效。
+在关闭、重启之间，耗费了大量的时间，这不是我们所预期的。
+
+这里提供一个折中的方案，我们的配置，都放在路由文件中，当路由文件更改时，我们仅仅重新载入此路由的内容，不再重启应用。
+
+例如:
+```javascript
+// router.js
+const express = require('express');
+const router = new express.Router();
+
+router.get('/user', function(req, res) {
+  res.send('hello!');
+});
+
+module.exports = router;
+```
+在入口文件中，如下配置:
+```javascript
+// app.js
+const express = require('express');
+const app = express();
+const path = require('path');
+const ReloadRouter = require('server-similation-toolkit').ReloadRouter;
+
+// 中间件之类的配置....
+
+app.use('/', new ReloadRouter(
+  path.resolve(__dirname, './router.js'), // 需要重载 的 路由文件 的 绝对路径
+  {
+    watchFile: true,     // 是否监控文件的变化，此开关方便在生成和开发环境之间切换
+    onUpdate: function() {
+      // 路由文件每次更新后 的 回调函数
+    }
+  }
+));
+
+app.listen(3000);
+```
+在 `router.js` 上的所有更改，都将在毫秒级别内生效。
+甚至 `router.js` 产生了异常，也会即时抛出，并且访问时动态跳过异常的路由。
+直至 `router.js` 没有异常，才会重新加入队列。
+
+
+# 其它常用方法
+```javascript
+const Toolkit = require('server-similation-toolkit');
+
+/**
+ * require 的没缓存版本
+ * @param {String} filename 文件名
+ * @param {String} dirname 寻址的目录地址
+ * @return Object
+*/
+Toolkit.require1(filename, dirname);
+
+/**
+ * 根据文件名字，从目录列表中，获取到文件的真实路径，找不到返回 false
+ * @param {String} filename 文件名字
+ * @param {Array<String>} dirnames 目录列表
+ * @return String || Boolean
+ */
+Toolkit.getFilepathByName(filename, dirnames);
+
+/**
+ * 从多个目录中，读取文件内容，如果文件不存在，就返回 null
+ * @param {String} filename 文件名字
+ * @param {Array<String>} dirnames 目录列表
+ * @return Buffer
+ */
+Toolkit.readFileFromDirs(filename, dirnames);
+
+/**
+ * 把字符串或者字节，以正确的编码读取出来
+ * @param {Buffer|String} bytes 需要转码的内容
+ * @param {Array|String} charsets bytes可能的编码列表
+ * @return {String} 转码后的字符串
+*/
+Toolkit.decode(bytes, charsets);
+```
+
+
 # (测试，下版本可能删除)DataSpider
 简单的源数据爬取，不做太复杂的功能，如要复杂的数据爬取，可配合 `puppeteer` 或者 `testcafe` 进行。
 
