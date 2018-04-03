@@ -6,6 +6,7 @@ exports.Server = require('./lib/server');
 exports.FileWatcher = require('./lib/file-watcher');
 exports.StaticResourcer = require('./lib/static-resourcer');
 exports.PollingReloader = require('./lib/livereload/polling');
+exports.EventsourceReloader = require('./lib/livereload/eventsource');
 exports.InjectMiddleware = require('./lib/middleware/inject');
 exports.ReloadRouter = require('./lib/express-reload-router');
 

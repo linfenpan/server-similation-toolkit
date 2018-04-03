@@ -35,7 +35,7 @@ const app = Server.create({
 在 `app` 实例中，除了 `express` 现有的 `use`，`get`、`post` 等方法外，还拓展了以下几个方法:
 ```javascript
 // 配置，并且启用 livereload 功能
-app.livereload(true || { url: .., api: .., timeout: .. });
+app.livereload(true || { type: '"polling" or "eventsource"', url: .., api: .., timeout: .. });
 
 // 切换 livereload 的可用状态，仅在 livereload 启动时，生效
 app.enableLivereload(true || false);
@@ -80,8 +80,8 @@ reloader.reload();      // 刷新页面
 ```
 须配合 `InjectMiddleware` 使用，同时，需要把 `response` 的 `Content-Type` 设置为 `text/html`，才会对 html 的内容，进行注入
 
-## websocket
-`websocket`形式的自动刷新，待实现...
+## EventsourceReloader
+参考上述 `PollingReloader` 的使用，客户端层使用 `EventSource`，进行数据接收。
 
 
 # middleware

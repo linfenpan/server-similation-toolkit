@@ -1,0 +1,84 @@
+;(function() {
+  var options = {
+    path: 'LIVE_RELOAD_URL',
+    timeout: LIVE_RELOAD_TIMEOUT
+  };
+  
+  function EventSourceWrapper() {
+    var lastActivity = new Date();
+    var listeners = [];
+    var source;
+    var timer;
+
+    // 超过一段时间，没有收到信息，就断开链接
+    var timer = setInterval(function() {
+      if ((new Date() - lastActivity) > options.timeout) {
+        handleDisconnect();
+      }
+    }, options.timeout / 2);
+
+    init();
+
+    function init() {
+      source = new window.EventSource(options.path);
+      source.onopen = handleOnline;
+      source.onerror = handleDisconnect;
+      source.onmessage = handleMessage;
+    }
+
+    function handleOnline() {
+      console.log('[SSE] connected');
+      lastActivity = new Date();
+    }
+
+    function handleMessage(event) {
+      lastActivity = new Date();
+      for (var i = 0; i < listeners.length; i++) {
+        listeners[i](event);
+      }
+    }
+
+    function handleDisconnect() {
+      clearInterval(timer);
+      source.close();
+    }
+
+    return {
+      addMessageListener: function(fn) {
+        listeners.push(fn);
+      }
+    };
+  }
+
+  var lastModifyTime = '';
+  var isReloading = false;
+
+  function handleMessage(event) {
+    if (isReloading) { return; }
+    try {
+      var data = JSON.parse(event.data);
+      if (!lastModifyTime) {
+        lastModifyTime = data.lastModifyTime;
+      } else if (lastModifyTime != data.lastModifyTime) {
+        isReloading = true;
+        window.location.reload();
+      }
+    } catch (ex) {
+      if (console.warn) {
+        console.warn("Invalid HMR message: " + event.data + "\n" + ex);
+      }
+    }
+  }
+
+  if (typeof window === 'undefined') {
+    // do nothing
+  } else if (typeof window.EventSource === 'undefined') {
+    window.console && console.warn(
+      "EventSource not support. " +
+      "You should include a polyfill if you want to support this browser: " +
+      "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events#Tools"
+    );
+  } else {
+    EventSourceWrapper().addMessageListener(handleMessage);
+  }
+})();

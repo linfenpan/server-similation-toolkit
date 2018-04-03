@@ -5,7 +5,9 @@ const ReloadRouter = require('../lib/express-reload-router');
 
 const app = Server.create({ 
   static: { '/static': './static' }, 
-  livereload: '/server/livereload', 
+  livereload: {
+    type: 'eventsource'
+  }, 
   port: 3000,
   // 跳过一些非 200 的日志
   morganSkip: function(req, res) {
