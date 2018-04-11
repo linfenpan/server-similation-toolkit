@@ -10,6 +10,12 @@ exports.EventsourceReloader = require('./lib/livereload/eventsource');
 exports.InjectMiddleware = require('./lib/middleware/inject');
 exports.ReloadRouter = require('./lib/express-reload-router');
 
+exports.chokidar = require('chokidar');
+exports.cheerio = require('cheerio');
+exports.chalk = require('chalk');
+exports.got = require('got');
+exports.co = require('co');
+
 // @test
 exports.DataSpider = require('./lib/data-spider');
 exports.Jinja2Template = require('./lib/template/jinja2');
