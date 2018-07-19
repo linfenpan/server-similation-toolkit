@@ -185,8 +185,14 @@ fileWatcher.watch('**/*.css').copyTo(function(p) {
 例如:
 ```javascript
 // router.js
-const express = require('express');
-const router = new express.Router();
+
+// express 的写法
+// const express = require('express');
+// const router = new express.Router();
+
+// Server 是 express 的二次封装，拥有 express 的所有方法、实例
+const Server = require('server-similation-toolkit').Server;
+const router = new Server.Router();
 
 router.get('/user', function(req, res) {
   res.send('hello!');
