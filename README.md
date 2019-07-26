@@ -209,8 +209,7 @@ const path = require('path');
 const ReloadRouter = require('server-similation-toolkit').ReloadRouter;
 
 // 中间件之类的配置....
-
-app.use('/', new ReloadRouter(
+const reloadRouter = new ReloadRouter(
   path.resolve(__dirname, './router.js'), // 需要重载 的 路由文件 的 绝对路径
   {
     watchFile: true,     // 是否监控文件的变化，此开关方便在生成和开发环境之间切换
@@ -218,7 +217,9 @@ app.use('/', new ReloadRouter(
       // 路由文件每次更新后 的 回调函数
     }
   }
-));
+);
+// reloadRouter.update(); // 强制更新路由文件
+app.use('/', reloadRouter);
 
 app.listen(3000);
 ```
